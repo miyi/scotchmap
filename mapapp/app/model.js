@@ -29,5 +29,6 @@ UserSchema.pre('save', function(next) {
 });
 
 UserSchema.index({location: '2dsphere'});
+
 module.exports = mongoose.model('Scotch-user', UserSchema);
 
