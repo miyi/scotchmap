@@ -11,10 +11,9 @@ var UserSchema = new Schema({
     location: {type: [Number], require: true}, // Mongo requires [long,lat] but google requires lat,long ***remember
     htmlverified: String,
     created_at: {type: Date, default: Date.now},
-    updated_at: {type: Date, default: Date.now}
+    updated_at: {type: Date, default: Date.now},
 
 });
-
 
 
 // Sets the created_at parameter equal to the current time
@@ -29,6 +28,4 @@ UserSchema.pre('save', function(next) {
 });
 
 UserSchema.index({location: '2dsphere'});
-
 module.exports = mongoose.model('Scotch-user', UserSchema);
-

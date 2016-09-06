@@ -1,6 +1,6 @@
-var addCtrl = angular.module('addCtrl', ['geolocation', 'gservice']);
-
-addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, gservice){
+// Creates the addCtrl Module and Controller. Note that it depends on the 'geolocation' module and service.
+var addCtrl = angular.module('addCtrl', ['gservice','geolocation']);
+addCtrl.controller('addCtrl', function($scope, $http, geolocation, gservice){
 
     // Initializes Variables
     // ----------------------------------------------------------------------------
@@ -13,40 +13,8 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
     $scope.formData.latitude = 39.500;
     $scope.formData.longitude = -98.350;
 
-    // Get User's actual coordinates based on HTML5 at window load
-    geolocation.getLocation().then(function(data){
-
-        // set the latitude and logitude equal to the HTML5 coordinates
-        coords = {lat: data.coords.latitude,
-            long: data.coords.longitude };
-
-        // Display coordinates in location textboxes rounded to three decimal points
-        $scope.formData.longitude = parseFloat(coords.long).toFixed(3);
-        $scope.formData.latitude = parseFloat(coords.lat).toFixed(3);
-
-        // Display message confirming that the coordinates verified
-        $scope.formData.htmlverified = 'Yep (thanks for giving us real data!)';
-
-        gservice.refresh($scope.formData.latitude, $scope.formData.longitude);
-
-    }); // end geolocation.getLocation().then(function(data){...
-
     // Functions
     // ----------------------------------------------------------------------------
-
-    // get coordinates based on map mouse click.
-    // when a click event is detected ...
-    $rootScope.$on('clicked', function(){
-
-        // Run the qservice functions associated with identifying coordinates
-        $scope.$apply(function(){
-            $scope.formData.latitude = parseFloat(gservice.clickLat).toFixed(3);
-            $scope.formData.longitude = parseFloat(gservice.clickLong).toFixed(3);
-            $scope.formData.htmlverified = "nope (thanks for spamming my map)";
-        });
-
-    }); // end $rootScope.on('clicked', function(){...
-
     // Creates a new user based on the form fields
     $scope.createUser = function() {
 
@@ -69,9 +37,6 @@ addCtrl.controller('addCtrl', function($scope, $http, $rootScope, geolocation, g
                 $scope.formData.gender = "";
                 $scope.formData.age = "";
                 $scope.formData.favlang = "";
-
-                // Refresh the map with new data
-                gservice.refresh($scope.formData.latitude, $scope.formData.longitude);
 
             })
             .error(function (data) {
