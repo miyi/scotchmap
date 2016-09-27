@@ -7,11 +7,11 @@ var UserSchema = new Schema({
     username: {type: String, require: true},
     gender: {type: String, require: true},
     age: {type: Number, require: true},
-    favlang: {type: String, require: true},
+    favclass: {type: String, require: true},
     location: {type: [Number], require: true}, // Mongo requires [long,lat] but google requires lat,long ***remember
     htmlverified: String,
     created_at: {type: Date, default: Date.now},
-    updated_at: {type: Date, default: Date.now},
+    updated_at: {type: Date, default: Date.now}
 
 });
 

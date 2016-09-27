@@ -16,7 +16,7 @@ angular.module('gservice', []).factory('gservice', function($http){
         // Functions
         // --------------------------------------------------------------
         // Refresh the Map with new data. Function will take new latitude and longitude coordinates.
-        googleMapService.refresh = function(latitude, longitude){
+        googleMapService.refresh = function(latitude, longitude, filteredResults){
 
             // Clears the holding array of locations
             locations = [];
@@ -25,15 +25,22 @@ angular.module('gservice', []).factory('gservice', function($http){
             selectedLat = latitude;
             selectedLong = longitude;
 
-            // Perform an AJAX call to get all of the records in the db.
-            $http.get('/users').success(function(response){
+            if(filteredResults) {
+                locations = convertToMapPoints(filteredResults);
+                initialize(latitude, longitude, true);
+            } else {
 
-                // Convert the results into Google Map Format
-                locations = convertToMapPoints(response);
+                // Perform an AJAX call to get all of the records in the db.
+                $http.get('/users').success(function (response) {
 
-                // Then initialize the map.
-                initialize(latitude, longitude);
-            }).error(function(){});
+                    // Convert the results into Google Map Format
+                    locations = convertToMapPoints(response);
+
+                    // Then initialize the map.
+                    initialize(latitude, longitude, false);
+                }).error(function () {
+                });
+            }
         };
 
         // Private Inner Functions
@@ -53,7 +60,7 @@ angular.module('gservice', []).factory('gservice', function($http){
                     '<p><b>Username</b>: ' + user.username +
                     '<br><b>Age</b>: ' + user.age +
                     '<br><b>Gender</b>: ' + user.gender +
-                    '<br><b>Favorite Language</b>: ' + user.favlang +
+                    '<br><b>Favorite Class</b>: ' + user.favclass +
                     '</p>';
 
                 // Converts each of the JSON records into Google Maps Location format (Note [Lat, Lng] format).
@@ -66,7 +73,7 @@ angular.module('gservice', []).factory('gservice', function($http){
                     username: user.username,
                     gender: user.gender,
                     age: user.age,
-                    favlang: user.favlang
+                    favclass: user.favclass
                 });
             }
             // location is now an array populated with records in Google Maps format
@@ -74,7 +81,7 @@ angular.module('gservice', []).factory('gservice', function($http){
         };
 
 // Initializes the map
-        var initialize = function(latitude, longitude) {
+        var initialize = function(latitude, longitude, filter) {
 
             // Uses the selected lat, long as starting point
             var myLatLng = {lat: selectedLat, lng: selectedLong};
@@ -87,6 +94,14 @@ angular.module('gservice', []).factory('gservice', function($http){
                     zoom: 3,
                     center: myLatLng
                 });
+
+            }
+
+            if(filter){
+                icon = "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
+            }
+            else{
+                icon = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
             }
 
             // Loop through each location in the array and place a marker
@@ -95,7 +110,8 @@ angular.module('gservice', []).factory('gservice', function($http){
                     position: n.latlon,
                     map: map,
                     title: "Big Map",
-                    icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                    animation: google.maps.Animation.DROP,
+                    icon: icon,
                 });
 
                 // For each marker created, add a listener that checks for clicks
@@ -108,14 +124,7 @@ angular.module('gservice', []).factory('gservice', function($http){
             });
 
             // Set initial location as a bouncing red marker
-            var initialLocation = new google.maps.LatLng(latitude, longitude);
-            var marker = new google.maps.Marker({
-                position: initialLocation,
-                animation: google.maps.Animation.BOUNCE,
-                map: map,
-                icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-            });
-            lastMarker = marker;
+
 
         };
 

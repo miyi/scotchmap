@@ -26,7 +26,7 @@ addCtrl.controller('addCtrl', function($scope, $http, geolocation, gservice){
         // Display message confirming that the coordinates verified
         $scope.formData.htmlverified = 'Yep (thanks for giving us real data!)';
 
-        gservice.refresh($scope.formData.latitude, $scope.formData.longitude);
+        gservice.refresh($scope.formData.latitude, $scope.formData.longitude, false);
 
     });
 
@@ -40,7 +40,7 @@ addCtrl.controller('addCtrl', function($scope, $http, geolocation, gservice){
             username: $scope.formData.username,
             gender: $scope.formData.gender,
             age: $scope.formData.age,
-            favlang: $scope.formData.favlang,
+            favclass: $scope.formData.favclass,
             location: [$scope.formData.longitude, $scope.formData.latitude],
             htmlverified: $scope.formData.htmlverified
         };
@@ -53,7 +53,7 @@ addCtrl.controller('addCtrl', function($scope, $http, geolocation, gservice){
                 $scope.formData.username = "";
                 $scope.formData.gender = "";
                 $scope.formData.age = "";
-                $scope.formData.favlang = "";
+                $scope.formData.favclass = "";
 
             })
             .error(function (data) {
